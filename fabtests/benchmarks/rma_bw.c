@@ -130,5 +130,6 @@ int main(int argc, char **argv)
 	ret = run();
 
 	free_ret = ft_free_res();
+	ret = ret ? ret : free_ret;
 	return -ret;
 }

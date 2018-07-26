@@ -106,6 +106,7 @@ static int free_bufs(void)
 	free(rx_bufs);
 	free(tx_ctxs);
 	free(rx_ctxs);
+	return 0;
 }
 
 static char *get_tx_buf(int index)

@@ -281,7 +281,7 @@ static int free_domain_res()
 		ret = ft_close_fid(&domain_res_array[dom_idx].dom->fid);
 		if (ret)
 			return ret;
-		free(domain_res_array[dom_idx].rma_ctx->fid);
+		free(domain_res_array[dom_idx].rma_ctx);
 	}
 	free(peer_addrs);
 	free(mr_buf_array);

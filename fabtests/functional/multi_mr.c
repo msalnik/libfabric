@@ -72,14 +72,18 @@ static int wait_cntr(struct fid_cntr *cntr, uint64_t *cntr_next)
 
 static int free_mr_res()
 {
-	int i;
+	int i, ret;
 
 	if (!mr_res_array)
 		return 0;
 
 	for (i = 0; i < mr_count; i++) {
-		FT_CLOSE_FID(&mr_res_array[i].mr->fid);
-		FT_CLOSE_FID(&mr_res_array[i].rcntr->fid);
+		ret = ft_close_fid(&mr_res_array[i].mr->fid);
+		if (ret)
+			return ret;
+		ret = ft_close_fid(&mr_res_array[i].rcntr->fid);
+		if (ret)
+			return ret;
 	}
 	free(mr_res_array);
 	free(remote_array);
