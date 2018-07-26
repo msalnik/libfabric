@@ -151,7 +151,7 @@ cq_signal()
 	struct fi_cq_tagged_entry entry;
 	int64_t elapsed;
 	int testret;
-	int ret;
+	int ret, free_ret;
 
 	testret = FAIL;
 
@@ -192,7 +192,8 @@ cq_signal()
 
 	testret = PASS;
 fail2:
-	FT_CLOSE_FID(cq);
+	free_ret = ft_close_fid(&cq->fid);
+	ret = ret ? ret : free_ret;
 fail1:
 	cq = NULL;
 	return TEST_RET_VAL(ret, testret);
@@ -213,7 +214,7 @@ static void usage(void)
 
 int main(int argc, char **argv)
 {
-	int op, ret;
+	int op, ret, free_ret;
 	int failed;
 
 	hints = fi_allocinfo();
@@ -256,6 +257,6 @@ int main(int argc, char **argv)
 	}
 
 err:
-	ft_free_res();
-	return ret ? ft_exit_code(ret) : (failed > 0) ? EXIT_FAILURE : EXIT_SUCCESS;
+	free_ret = ft_free_res();
+	return ret ? ft_exit_code(ret, free_ret) : (failed > 0) ? EXIT_FAILURE : EXIT_SUCCESS;
 }

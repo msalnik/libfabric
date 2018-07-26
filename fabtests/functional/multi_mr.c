@@ -78,8 +78,8 @@ static int free_mr_res()
 		return 0;
 
 	for (i = 0; i < mr_count; i++) {
-		FT_CLOSE_FID(mr_res_array[i].mr);
-		FT_CLOSE_FID(mr_res_array[i].rcntr);
+		FT_CLOSE_FID(&mr_res_array[i].mr->fid);
+		FT_CLOSE_FID(&mr_res_array[i].rcntr->fid);
 	}
 	free(mr_res_array);
 	free(remote_array);
@@ -275,6 +275,7 @@ int main(int argc, char **argv)
 {
 	int op;
 	int ret = 0;
+	int free_ret;
 
 	opts = INIT_OPTS;
 	opts.transfer_size = 4096;
@@ -320,6 +321,6 @@ int main(int argc, char **argv)
 	ret = run_test();
 
 	free_mr_res();
-	ft_free_res();
-	return ft_exit_code(ret);
+	free_ret = ft_free_res();
+	return ft_exit_code(ret, free_ret);
 }
