@@ -216,14 +216,35 @@ static int server_accept(size_t paramlen)
 	if (ret)
 		goto err;
 
-	FT_CLOSE_FID(ep);
-	FT_CLOSE_FID(rxcq);
-	FT_CLOSE_FID(txcq);
-	FT_CLOSE_FID(rxcntr);
-	FT_CLOSE_FID(txcntr);
-	FT_CLOSE_FID(av);
-	FT_CLOSE_FID(domain);
 
+	ret = ft_close_fid(&ep->fid);
+	if (ret)
+		return ret;
+	ep = NULL;
+	ret = ft_close_fid(&rxcq->fid);
+	if (ret)
+		return ret;
+	rxcq = NULL;
+	ret = ft_close_fid(&txcq->fid);
+	if (ret)
+		return ret;
+	txcq = NULL;
+	ret = ft_close_fid(&rxcntr->fid);
+	if (ret)
+		return ret;
+	rxcntr = NULL;
+	ret = ft_close_fid(&txcntr->fid);
+	if (ret)
+		return ret;
+	txcntr = NULL;
+	ret = ft_close_fid(&av->fid);
+	if (ret)
+		return ret;
+	av = NULL;
+	ret = ft_close_fid(&domain->fid);
+	if (ret)
+		return ret;
+	domain = NULL;
 	return 0;
 
 err:
@@ -255,8 +276,10 @@ static int client_open_new_ep()
 	size_t opt_size;
 	int ret;
 
-	FT_CLOSE_FID(ep);
-
+	ret = ft_close_fid(&ep->fid);
+	if (ret)
+		return ret;
+	ep = NULL;
 	ret = fi_endpoint(domain, fi, &ep, NULL);
 	if (ret) {
 		FT_PRINTERR("fi_endpoint", ret);
@@ -443,7 +466,7 @@ err2:
 
 int main(int argc, char **argv)
 {
-	int op, ret;
+	int op, ret, free_ret;
 
 	opts = INIT_OPTS;
 	opts.options |= FT_OPT_SIZE | FT_OPT_SKIP_REG_MR;
@@ -478,7 +501,13 @@ int main(int argc, char **argv)
 	hints->domain_attr->mr_mode = FI_MR_LOCAL | OFI_MR_BASIC_MAP;
 
 	ret = run();
+	ep = NULL;
+	rxcq = NULL;
+	txcq = NULL;
+	domain = NULL;
+	eq = NULL;
+	fabric = NULL;
+	free_ret = ft_free_res();
 
-	ft_free_res();
-	return ft_exit_code(ret);
+	return ft_exit_code(ret, free_ret);
 }

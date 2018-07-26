@@ -204,7 +204,6 @@ static int run_test(void)
 
 	alloc_bufs();
 	ret = run_test_loop();
-
 	return ret;
 }
 
@@ -212,6 +211,7 @@ int main(int argc, char **argv)
 {
 	int op;
 	int ret;
+	int free_ret;
 
 	opts = INIT_OPTS;
 	opts.options |= FT_OPT_OOB_SYNC | FT_OPT_SKIP_MSG_ALLOC;
@@ -271,6 +271,6 @@ int main(int argc, char **argv)
 
 	ret = run_test();
 
-	ft_free_res();
-	return ft_exit_code(ret);
+	free_ret = ft_free_res();
+	return ft_exit_code(ret, free_ret);
 }

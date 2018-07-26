@@ -280,6 +280,7 @@ av_good_sync()
 {
 	int testret;
 	int ret;
+	int free_ret;
 	struct fid_av *av;
 	struct fi_av_attr attr;
 	uint8_t addrbuf[4096];
@@ -321,7 +322,8 @@ av_good_sync()
 
 	testret = PASS;
 fail:
-	FT_CLOSE_FID(av);
+	free_ret = ft_close_fid(&av->fid);
+	ret = ret ? ret : free_ret;
 	return TEST_RET_VAL(ret, testret);
 }
 
@@ -329,7 +331,7 @@ static int
 av_null_fi_addr()
 {
 	int testret;
-	int ret;
+	int ret, free_ret;
 	struct fid_av *av;
 	struct fi_av_attr attr;
 	uint8_t addrbuf[4096];
@@ -370,7 +372,8 @@ av_null_fi_addr()
 	}
 	testret = PASS;
 out2:
-	FT_CLOSE_FID(av);
+	free_ret = ft_close_fid(&av->fid);
+	ret = ret ? ret : free_ret;
 out1:
 	return TEST_RET_VAL(ret, testret);
 }
@@ -384,6 +387,7 @@ av_bad_sync()
 {
 	int testret;
 	int ret;
+	int free_ret;
 	struct fid_av *av;
 	struct fi_av_attr attr;
 	uint8_t addrbuf[4096];
@@ -427,7 +431,8 @@ av_bad_sync()
 
 	testret = PASS;
 fail:
-	FT_CLOSE_FID(av);
+	free_ret = ft_close_fid(&av->fid);
+	ret = ret ? ret : free_ret;
 	return TEST_RET_VAL(ret, testret);
 }
 
@@ -441,6 +446,7 @@ av_goodbad_vector_sync()
 	int testret;
 	int ret;
 	int i;
+	int free_ret;
 	struct fid_av *av;
 	struct fi_av_attr attr;
 	uint8_t addrbuf[4096];
@@ -498,7 +504,8 @@ av_goodbad_vector_sync()
 
 	testret = PASS;
 fail:
-	FT_CLOSE_FID(av);
+	free_ret = ft_close_fid(&av->fid);
+	ret = ret ? ret : free_ret;
 	return TEST_RET_VAL(ret, testret);
 }
 
@@ -512,6 +519,7 @@ av_good_vector_async()
 	int testret;
 	int ret;
 	int i;
+	int free_ret;
 	struct fid_av *av;
 	struct fi_av_attr attr;
 	uint8_t addrbuf[4096];
@@ -572,7 +580,8 @@ av_good_vector_async()
 
 	testret = PASS;
 fail:
-	FT_CLOSE_FID(av);
+	free_ret = ft_close_fid(&av->fid);
+	ret = ret ? ret : free_ret;
 	return TEST_RET_VAL(ret, testret);
 }
 
@@ -585,6 +594,7 @@ av_zero_async()
 {
 	int testret;
 	int ret;
+	int free_ret;
 	struct fid_av *av;
 	struct fi_av_attr attr;
 	uint8_t addrbuf[4096];
@@ -624,7 +634,8 @@ av_zero_async()
 
 	testret = PASS;
 fail:
-	FT_CLOSE_FID(av);
+	free_ret = ft_close_fid(&av->fid);
+	ret = ret ? ret : free_ret;
 	return TEST_RET_VAL(ret, testret);
 }
 
@@ -638,6 +649,7 @@ av_good_2vector_async()
 	int testret;
 	int ret;
 	int i;
+	int free_ret;
 	struct fid_av *av;
 	struct fi_av_attr attr;
 	uint8_t addrbuf[4096];
@@ -732,7 +744,8 @@ av_good_2vector_async()
 
 	testret = PASS;
 fail:
-	FT_CLOSE_FID(av);
+	free_ret = ft_close_fid(&av->fid);
+	ret = ret ? ret : free_ret;
 	return TEST_RET_VAL(ret, testret);
 }
 
@@ -746,6 +759,7 @@ av_goodbad_vector_async()
 	int testret;
 	int ret;
 	int i;
+	int free_ret;
 	struct fid_av *av;
 	struct fi_av_attr attr;
 	uint8_t addrbuf[4096];
@@ -830,7 +844,8 @@ av_goodbad_vector_async()
 
 	testret = PASS;
 fail:
-	FT_CLOSE_FID(av);
+	free_ret = ft_close_fid(&av->fid);
+	ret = ret ? ret : free_ret;
 	return TEST_RET_VAL(ret, testret);
 }
 
@@ -887,7 +902,7 @@ static void usage(void)
 
 int main(int argc, char **argv)
 {
-	int op, ret;
+	int op, ret, free_ret;
 	int failed;
 
 	opts = INIT_OPTS;
@@ -984,6 +999,6 @@ int main(int argc, char **argv)
 	}
 
 err:
-	ft_free_res();
-	return ret ? ft_exit_code(ret) : (failed > 0) ? EXIT_FAILURE : EXIT_SUCCESS;
+	free_ret = ft_free_res();
+	return ret ? ft_exit_code(ret, free_ret) : (failed > 0) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
